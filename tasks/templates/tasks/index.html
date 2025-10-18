@@ -1,0 +1,43 @@
+{% extends 'tasks/base.html' %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="row g-2">
+                <div class="col-md-5">{{ form.title }}</div>
+                <div class="col-md-5">{{ form.description }}</div>
+                <div class="col-md-2 d-grid">
+                    <button class="btn btn-primary">Add Task</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<ul class="list-group">
+    {% for task in tasks %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+            <form action="{% url 'tasks:toggle' task.pk %}" method="post" style="display:inline">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-outline-secondary me-2">
+                    {% if task.completed %}✓{% else %}○{% endif %}
+                </button>
+            </form>
+            <strong {% if task.completed %}style="text-decoration: line-through; color: #6c757d;"{% endif %}>
+                {{ task.title }}
+            </strong>
+            <div class="small text-muted">{{ task.description }}</div>
+        </div>
+        <div>
+            <a href="{% url 'tasks:edit' task.pk %}" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+            <a href="{% url 'tasks:delete' task.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+        </div>
+    </li>
+    {% empty %}
+    <li class="list-group-item">No tasks yet.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
